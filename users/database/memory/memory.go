@@ -17,7 +17,11 @@ func New() *MemoryDB {
 	return &MemoryDB{data: make(map[int]*users.User)}
 }
 
-func (d *MemoryDB) GetUser(id int) (*users.User, error) {
+func NewTest() *MemoryDB {
+	return &MemoryDB{data: map[int]*users.User{1: {}}}
+}
+
+func (d *MemoryDB) GetUser(_ context.Context, id int) (*users.User, error) {
 	d.RLock()
 	defer d.RUnlock()
 
