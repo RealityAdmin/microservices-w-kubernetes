@@ -10,7 +10,7 @@ import (
 
 type Repo interface {
 	GetUser(ctx context.Context, id int) (*users.User, error)
-	// PutUser(ctx context.Context, id int, user *users.User) error
+	PutUser(ctx context.Context, id int, user *users.User) error
 }
 
 type Controller struct {
@@ -30,4 +30,8 @@ func (c *Controller) GetUser(ctx context.Context, id int) (*users.User, error) {
 	}
 
 	return res, err
+}
+
+func (c *Controller) PutUser(ctx context.Context, id int, user *users.User) error {
+	return c.repo.PutUser(ctx, id, user)
 }

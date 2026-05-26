@@ -38,7 +38,7 @@ func (d *MemoryDB) PutUser(_ context.Context, id int, user *users.User) error {
 	defer d.Unlock()
 
 	// Assert that the user does not already exist.
-	user, ok := d.data[id]
+	_, ok := d.data[id]
 	if ok {
 		return database.UserAlreadyExists
 	}
