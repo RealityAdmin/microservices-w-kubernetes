@@ -8,23 +8,23 @@ import (
 	"k-microserv-kuber.com/users/database"
 )
 
-type Repo interface {
-	GetUser(ctx context.Context, id int) (*users.User, error)
-	PutUser(ctx context.Context, id int, user *users.User) error
+type Database interface {
+	GetUser(ctx context.Context, userId int) (*users.User, error)
+	PutUser(ctx context.Context, userId int, user *users.User) error
 }
 
 type Controller struct {
-	repo Repo
+	db Database
 }
 
-func New(repo Repo) *Controller {
-	return &Controller{repo: repo}
+func New(db Database) *Controller {
+	return &Controller{db: db}
 }
 
 var ErrNotFound = errors.New("User not found")
 
-func (c *Controller) GetUser(ctx context.Context, id int) (*users.User, error) {
-	res, err := c.repo.GetUser(ctx, id)
+func (c *Controller) GetUser(ctx context.Context, userId int) (*users.User, error) {
+	res, err := c.db.GetUser(ctx, userId)
 	if err != nil && errors.Is(err, database.ErrNotFound) {
 		return nil, ErrNotFound
 	}
@@ -32,6 +32,6 @@ func (c *Controller) GetUser(ctx context.Context, id int) (*users.User, error) {
 	return res, err
 }
 
-func (c *Controller) PutUser(ctx context.Context, id int, user *users.User) error {
-	return c.repo.PutUser(ctx, id, user)
+func (c *Controller) PutUser(ctx context.Context, userId int, user *users.User) error {
+	return c.db.PutUser(ctx, userId, user)
 }

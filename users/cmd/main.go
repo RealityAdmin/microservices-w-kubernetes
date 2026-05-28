@@ -18,8 +18,8 @@ func main() {
 	flag.Parse()
 	log.Printf("Starting metadata service on port %d", port)
 
-	repo := memory.New()
-	svc := controller.New(repo)
+	db := memory.New()
+	svc := controller.New(db)
 	h := httphandler.New(svc)
 	http.Handle("/user", http.HandlerFunc(h.Handle))
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {

@@ -1,5 +1,5 @@
 ## Overview of Tasks
-1. Create User service with basics (get user, put user), and test.
+1. Create User service with basics (get user, put user), and test. (mock tests left)
 2. Create Product service with basics (get product, insert product), and test.
 3. Create Order service with basics (get user, get prduct, get order, place order, cancel order), and test.
 4. Establish Kubernetes cluster and get services communicating with each other.

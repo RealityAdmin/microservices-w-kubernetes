@@ -21,30 +21,30 @@ func NewTest() *MemoryDB {
 	return &MemoryDB{data: map[int]*users.User{1: {}}}
 }
 
-func (d *MemoryDB) GetUser(_ context.Context, id int) (*users.User, error) {
+func (d *MemoryDB) GetUser(_ context.Context, userId int) (*users.User, error) {
 	d.RLock()
 	defer d.RUnlock()
 
 	// Find the user
-	user, ok := d.data[id]
+	user, ok := d.data[userId]
 	if !ok {
 		return nil, database.ErrNotFound
 	}
 	return user, nil
 }
 
-func (d *MemoryDB) PutUser(_ context.Context, id int, user *users.User) error {
+func (d *MemoryDB) PutUser(_ context.Context, userId int, user *users.User) error {
 	d.Lock()
 	defer d.Unlock()
 
 	// Assert that the user does not already exist.
-	_, ok := d.data[id]
+	_, ok := d.data[userId]
 	if ok {
 		return database.UserAlreadyExists
 	}
 
 	// Insert the user
-	d.data[id] = user
+	d.data[userId] = user
 
 	return nil
 }
