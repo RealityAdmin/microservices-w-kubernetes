@@ -50,7 +50,7 @@ func (h *Handler) Handle(w http.ResponseWriter, req *http.Request) {
 			log.Printf("Product get response encode error: %v\n", err)
 		}
 	case http.MethodPost:
-		productName := req.FormValue("productId")
+		productName := req.FormValue("name")
 		if productName == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			return

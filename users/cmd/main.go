@@ -16,7 +16,7 @@ func main() {
 	var port int
 	flag.IntVar(&port, "port", 8081, "API handler port")
 	flag.Parse()
-	log.Printf("Starting metadata service on port %d", port)
+	log.Printf("Starting user service on port %d", port)
 
 	db := memory.New()
 	svc := controller.New(db)
