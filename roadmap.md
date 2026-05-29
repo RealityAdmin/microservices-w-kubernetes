@@ -6,3 +6,4 @@
 5. Swap from HTTP to gRPC for inter-service communication.
 6. Introduce more permanent storage in MySQL instead of memory.
 7. Introduce quantity to products and edit place order accordingly.
+8. Expand possible endpoints to listing orders, users, products.
