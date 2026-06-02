@@ -31,16 +31,16 @@ func (d *MemoryDB) GetOrder(_ context.Context, orderId int) (*orders.Order, erro
 }
 
 // Place an order. Assume that user and product exists (checks done already)
-func (d *MemoryDB) PlaceOrder(_ context.Context, userId int, productId int) error {
+func (d *MemoryDB) PlaceOrder(_ context.Context, orderId int, order *orders.Order) error {
 	d.RLock()
 	defer d.RUnlock()
 
-	new_id := len(d.data)
-	d.data[new_id] = &orders.Order{
-		OrderID:   new_id,
-		UserID:    userId,
-		ProductID: productId,
+	_, ok := d.data[orderId]
+	if ok {
+		return database.OrderAlreadyExists
 	}
+
+	d.data[orderId] = order
 
 	return nil
 }
