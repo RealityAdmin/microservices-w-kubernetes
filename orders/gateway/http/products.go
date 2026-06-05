@@ -57,7 +57,7 @@ func (g *productGateway) InsertProduct(ctx context.Context, productId int, produ
 	values := req.URL.Query()
 	values.Add("productId", fmt.Sprintf("%d", productId))
 	values.Add("name", productName)
-	values.Add("price", fmt.Sprintf("%d", price))
+	values.Add("price", fmt.Sprintf("%v", price))
 	req.URL.RawQuery = values.Encode()
 
 	resp, err := http.DefaultClient.Do(req)

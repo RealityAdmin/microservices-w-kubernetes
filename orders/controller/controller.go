@@ -28,8 +28,8 @@ type userGateway interface {
 }
 
 type productGateway interface {
-	GetProduct(ctx context.Context, productId string) (*products.Product, error)
-	InsertProduct(ctx context.Context, productId string, productName string, price float64) error
+	GetProduct(ctx context.Context, productId int) (*products.Product, error)
+	InsertProduct(ctx context.Context, productId int, productName string, price float64) error
 }
 
 func New(db Database, ug userGateway, pg productGateway) *Controller {
@@ -45,6 +45,19 @@ func (c *Controller) GetUser(ctx context.Context, userId int) (*users.User, erro
 	return u, err
 }
 
+func (c *Controller) PutUser(ctx context.Context, userId int, email string) error {
+	return c.userGateway.PutUser(ctx, userId, email)
+}
+
+func (c *Controller) GetProduct(ctx context.Context, productId int) (*products.Product, error) {
+	p, err := c.productGateway.GetProduct(ctx, productId)
+	return p, err
+}
+
+func (c *Controller) InsertProduct(ctx context.Context, productId int, productName string, price float64) error {
+	return c.productGateway.InsertProduct(ctx, productId, productName, price)
+}
+
 // TODO: Integrate the user and product gateway calls into this.
 func (c *Controller) GetOrder(ctx context.Context, orderId int) (*orders.Order, error) {
 	o, err := c.db.GetOrder(ctx, orderId)
@@ -54,6 +67,7 @@ func (c *Controller) GetOrder(ctx context.Context, orderId int) (*orders.Order, 
 	return o, err
 }
 
+// TODO: Integrate the user and product gateway calls into this.
 func (c *Controller) PlaceOrder(ctx context.Context, orderId int, order *orders.Order) error {
 	return c.db.PlaceOrder(ctx, orderId, order)
 }
