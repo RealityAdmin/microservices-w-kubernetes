@@ -29,6 +29,7 @@ func main() {
 
 	mux.HandleFunc("/users", h.HandleUserEndpoint)
 	mux.HandleFunc("/products", h.HandleProductEndpoint)
+	mux.HandleFunc("/orders", h.HandleOrderEndpoint)
 
 	http.ListenAndServe(fmt.Sprintf(":%d", port), mux)
 

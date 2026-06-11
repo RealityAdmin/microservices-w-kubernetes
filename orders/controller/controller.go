@@ -58,7 +58,6 @@ func (c *Controller) InsertProduct(ctx context.Context, productId int, productNa
 	return c.productGateway.InsertProduct(ctx, productId, productName, price)
 }
 
-// TODO: Integrate the user and product gateway calls into this.
 func (c *Controller) GetOrder(ctx context.Context, orderId int) (*orders.Order, error) {
 	o, err := c.db.GetOrder(ctx, orderId)
 	if err != nil && errors.Is(err, database.ErrNotFound) {
@@ -69,5 +68,67 @@ func (c *Controller) GetOrder(ctx context.Context, orderId int) (*orders.Order, 
 
 // TODO: Integrate the user and product gateway calls into this.
 func (c *Controller) PlaceOrder(ctx context.Context, orderId int, order *orders.Order) error {
+	productId := order.ProductID
+	userId := order.UserID
+
+	// Assert that users and products exist
+	// var wg sync.WaitGroup
+
+	// userExists :=
+	// var productExists bool
+
+	// wg.Go(func ()  {
+	// 	_, err := c.userGateway.GetUser(ctx, userId)
+	// 	if err != nil {
+	// 		userExists = false
+	// 	}
+	// 	userExists = true
+	// })
+
+	newCtx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	errChan := make(chan bool)
+
+	// Launch subroutine to get user
+	go func(context.Context, chan bool) {
+		_, err := c.userGateway.GetUser(newCtx, userId)
+
+		if ctx.Err() != nil {
+			return
+		}
+
+		if err != nil {
+			errChan <- false
+			return
+		}
+		errChan <- true
+	}(newCtx, errChan)
+
+	// Launch subroutine to get product
+	go func(context.Context, chan bool) {
+		_, err := c.productGateway.GetProduct(newCtx, productId)
+
+		if ctx.Err() != nil {
+			return
+		}
+
+		if err != nil {
+			errChan <- false
+			return
+		}
+		errChan <- true
+	}(newCtx, errChan)
+
+	// If either fails, cancel the other and return an error.
+	for i := 0; i < 2; i++ {
+		err := <-errChan
+		if err == false {
+			cancel()
+			return database.UserOrProductNotFound
+		}
+	}
+
+	// We have a match, now actually place the order
 	return c.db.PlaceOrder(ctx, orderId, order)
 }

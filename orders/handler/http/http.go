@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"k-microserv-kuber.com/orders"
 	"k-microserv-kuber.com/orders/controller"
 	"k-microserv-kuber.com/orders/database"
 	"k-microserv-kuber.com/orders/gateway"
@@ -93,7 +94,7 @@ func (h *Handler) HandleProductEndpoint(w http.ResponseWriter, req *http.Request
 	case http.MethodGet:
 		ctx := req.Context()
 		p, err := h.ctrl.GetProduct(ctx, productId)
-		if err != nil && errors.Is(err, database.ErrNotFound) {
+		if err != nil && errors.Is(err, gateway.ErrNotFound) {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		} else if err != nil {
@@ -131,6 +132,83 @@ func (h *Handler) HandleProductEndpoint(w http.ResponseWriter, req *http.Request
 				return
 			} else {
 				log.Printf("Product creation error: %v\n", err)
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+		}
+
+	default:
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+}
+
+func (h *Handler) HandleOrderEndpoint(w http.ResponseWriter, req *http.Request) {
+	id := req.FormValue("orderId")
+	if id == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	orderId, err := strconv.Atoi(id)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	switch req.Method {
+	case http.MethodGet:
+		ctx := req.Context()
+		o, err := h.ctrl.GetOrder(ctx, orderId)
+		if err != nil && errors.Is(err, gateway.ErrNotFound) {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		} else if err != nil {
+			log.Printf("Order get error: %v\n", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		if err := json.NewEncoder(w).Encode(o); err != nil {
+			log.Printf("Order get response encode error: %v\n", err)
+		}
+	case http.MethodPost:
+		ctx := req.Context()
+
+		ui := req.FormValue("userId")
+		if ui == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		pi := req.FormValue("productId")
+		if pi == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		userId, err := strconv.Atoi(ui)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		productId, err := strconv.Atoi(pi)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		newOrder := &orders.Order{
+			ProductID: productId,
+			UserID:    userId,
+		}
+
+		if err := h.ctrl.PlaceOrder(ctx, orderId, newOrder); err != nil {
+			if errors.Is(err, database.OrderAlreadyExists) || errors.Is(err, database.UserOrProductNotFound) {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			} else {
+				log.Printf("Order palcement error: %v\n", err)
 				w.WriteHeader(http.StatusInternalServerError)
 			}
 		}

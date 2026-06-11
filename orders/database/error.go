@@ -13,3 +13,5 @@ var ProductNotFound = errors.New("The product was not found.")
 var ProductAlreadyExists = errors.New("A product with this id already exists.")
 
 var UserAlreadyExists = errors.New("A user with this id already exists.")
+
+var UserOrProductNotFound = errors.New("The user or product specified was not found.")
