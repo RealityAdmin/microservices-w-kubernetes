@@ -1,0 +1,12 @@
+FROM golang:1.26
+
+WORKDIR /app
+
+COPY go.mod ./
+RUN go mod download
+
+COPY ./products ./products
+RUN go build -o main ./products/cmd/main.go
+EXPOSE 8082
+
+CMD ["./main"]
