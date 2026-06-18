@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: users
-        image: realityadmin/users:1.0.0
+        image: realityadmin/users:1.1.2
         ports:
           - containerPort: 8081

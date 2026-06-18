@@ -6,6 +6,7 @@ COPY go.mod ./
 RUN go mod download
 
 COPY ./users ./users
+RUN go get github.com/go-sql-driver/mysql
 RUN go build -o main ./users/cmd/main.go
 EXPOSE 8081
 

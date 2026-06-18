@@ -1,0 +1,11 @@
+FROM mysql:latest
+
+WORKDIR /usr/database
+
+ENV MYSQL_ROOT_PASSWORD=password
+
+ENV MYSQL_DATABASE=orders
+
+COPY init.sql /docker-entrypoint-initdb.d
+
+EXPOSE 3306
