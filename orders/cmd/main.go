@@ -19,8 +19,8 @@ func main() {
 	log.Printf("Starting products service on port %d", port)
 
 	db := memory.New()
-	ug := serviceGateway.NewUserGateway("http://localhost:8081")
-	pg := serviceGateway.NewProductGateway("http://localhost:8082")
+	ug := serviceGateway.NewUserGateway("http://users-service:8081")
+	pg := serviceGateway.NewProductGateway("http://products-service:8082")
 
 	ctrl := controller.New(db, ug, pg)
 	h := httphandler.New(ctrl)
