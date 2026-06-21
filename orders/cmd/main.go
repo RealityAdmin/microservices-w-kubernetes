@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"k-microserv-kuber.com/orders/controller"
-	"k-microserv-kuber.com/orders/database/memory"
+	"k-microserv-kuber.com/orders/database/mysql"
 	serviceGateway "k-microserv-kuber.com/orders/gateway/http"
 	httphandler "k-microserv-kuber.com/orders/handler/http"
 )
@@ -18,7 +18,11 @@ func main() {
 	flag.Parse()
 	log.Printf("Starting products service on port %d", port)
 
-	db := memory.New()
+	db, err := mysql.New()
+	if err != nil {
+		panic(err)
+	}
+
 	ug := serviceGateway.NewUserGateway("http://users-service:8081")
 	pg := serviceGateway.NewProductGateway("http://products-service:8082")
 

@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"k-microserv-kuber.com/products/controller"
-	"k-microserv-kuber.com/products/database/memory"
+	"k-microserv-kuber.com/products/database/mysql"
 
 	httphandler "k-microserv-kuber.com/products/handler/http"
 )
@@ -18,7 +18,10 @@ func main() {
 	flag.Parse()
 	log.Printf("Starting products service on port %d", port)
 
-	db := memory.New()
+	db, err := mysql.New()
+	if err != nil {
+		panic(err)
+	}
 	svc := controller.New(db)
 	h := httphandler.New(svc)
 	http.Handle("/products", http.HandlerFunc(h.Handle))

@@ -6,7 +6,7 @@ metadata:
     app: orders
 
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: orders
@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: orders
-        image: realityadmin/orders:1.1.0
+        image: realityadmin/orders:1.2.0
         ports:
           - containerPort: 8083

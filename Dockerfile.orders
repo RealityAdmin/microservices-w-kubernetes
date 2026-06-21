@@ -8,6 +8,7 @@ RUN go mod download
 COPY orders ./orders
 COPY products ./products
 COPY users ./users
+RUN go get github.com/go-sql-driver/mysql
 RUN go build -o main ./orders/cmd/*.go
 EXPOSE 8083
 
